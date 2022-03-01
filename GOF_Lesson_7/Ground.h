@@ -16,8 +16,12 @@ enum CraterSize
 class Crater : public GameObject
 {
 public:
-	bool isInside(double xn) const;
+
+	bool __fastcall isInside(double xn) const;
+	
 	void Draw() const override;
+
+private:
 
 };
 
@@ -26,15 +30,17 @@ public:
 class Ground : public GameObject
 {
 public:
+
 	Ground() { }
+
 	void Draw() const override;
-	void AddCrater(double xn);
+
+	void __fastcall AddCrater(double xn);
 
 private:
+
+	bool __fastcall isInsideAnyCrater(double x) const;
+
 	std::vector<Crater> vecCrates;
-
-	bool isInsideAnyCrater(double x) const;
-
-	
 };
 

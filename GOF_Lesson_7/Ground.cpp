@@ -12,9 +12,9 @@ void Crater::Draw() const
 {
     if (width == SMALL_CRATER_SIZE) // Рисование воронки в 9 символов шириной
     {
-		ScreenSingleton::getInstance().GotoXY(x - 4, y + 1);
+        GotoXY(x - 4, y + 1);
         cout << "==     ==";
-		ScreenSingleton::getInstance().GotoXY(x - 2, y + 2);
+        GotoXY(x - 2, y + 2);
         cout << "=====";
     }
 }
@@ -34,10 +34,10 @@ bool Crater::isInside(double xn) const
 
 void Ground::Draw() const
 {
-    MyTools::ScreenSingleton::getInstance().SetColor(CC_Green);
+    MyTools::SetColor(CC_Green);
 
     const size_t bufSize = width + 1;
-    auto buf = make_unique<char[]>(bufSize);
+    char* buf = new (nothrow) char[bufSize];
     if (buf == nullptr)
     {
         return;
@@ -45,8 +45,8 @@ void Ground::Draw() const
 
     if (vecCrates.size() == 0)
     {
-		ScreenSingleton::getInstance().GotoXY(x, y);
-        memset(buf.get(), '=', bufSize);
+        GotoXY(x, y);
+        memset(buf, '=', bufSize);
         buf[bufSize - 1] = '\0';
         cout << buf;
     }
@@ -60,7 +60,7 @@ void Ground::Draw() const
             buf[i - X] = c;
         }
 
-		ScreenSingleton::getInstance().GotoXY((double)X, y);
+        GotoXY((double)X, y);
         buf[bufSize-1] = '\0';
         cout << buf;
 
@@ -69,6 +69,8 @@ void Ground::Draw() const
             vecCrates[i].Draw();
         }
     }
+
+    delete[] buf;
 }
 
 bool Ground::isInsideAnyCrater(double x) const
