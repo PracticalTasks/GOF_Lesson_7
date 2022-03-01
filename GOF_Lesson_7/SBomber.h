@@ -27,7 +27,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<DynamicObject>> vecDynamicObj;
-    std::vector<GameObject*> vecStaticObj;
+    std::vector<std::shared_ptr<GameObject>> vecStaticObj;
 
     bool exitFlag;
 
@@ -44,12 +44,12 @@ private:
     void CheckDestoyableObjects(std::shared_ptr<Bomb> pBomb);
 
     void DeleteDynamicObj(std::shared_ptr<DynamicObject> pBomb);
-    void DeleteStaticObj(GameObject* pObj);
+    void DeleteStaticObj(std::shared_ptr<GameObject> pObj);
 
-    Ground * FindGround() const;
+    std::shared_ptr<Ground> FindGround() const;
     std::shared_ptr<Plane> FindPlane() const;
-    LevelGUI * FindLevelGUI() const;
-    std::vector<DestroyableGroundObject*> FindDestoyableGroundObjects() const;
+    std::shared_ptr<LevelGUI> FindLevelGUI() const;
+    std::vector<std::shared_ptr<DestroyableGroundObject>> FindDestoyableGroundObjects() const;
     std::vector<std::shared_ptr<Bomb>> FindAllBombs() const;
 
     void DropBomb();

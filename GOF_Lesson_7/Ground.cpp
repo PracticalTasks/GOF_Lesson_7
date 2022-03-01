@@ -37,7 +37,7 @@ void Ground::Draw() const
     MyTools::ScreenSingleton::getInstance().SetColor(CC_Green);
 
     const size_t bufSize = width + 1;
-    char* buf = new (nothrow) char[bufSize];
+    auto buf = make_unique<char[]>(bufSize);
     if (buf == nullptr)
     {
         return;
@@ -46,7 +46,7 @@ void Ground::Draw() const
     if (vecCrates.size() == 0)
     {
 		ScreenSingleton::getInstance().GotoXY(x, y);
-        memset(buf, '=', bufSize);
+        memset(buf.get(), '=', bufSize);
         buf[bufSize - 1] = '\0';
         cout << buf;
     }
@@ -69,8 +69,6 @@ void Ground::Draw() const
             vecCrates[i].Draw();
         }
     }
-
-    delete[] buf;
 }
 
 bool Ground::isInsideAnyCrater(double x) const

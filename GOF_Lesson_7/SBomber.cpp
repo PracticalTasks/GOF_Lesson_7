@@ -24,13 +24,13 @@ SBomber::SBomber()
 {
 	FileLoggerSingleton::getInstance().WriteToLog(string(__FUNCTION__) + " was invoked");
 
-    std::unique_ptr<Plane> p(new Plane);
+    std::shared_ptr<Plane> p(new Plane);
     p->SetDirection(1, 0.1);
     p->SetSpeed(4);
     p->SetPos(5, 10);
     vecDynamicObj.push_back(std::move(p));
 
-    LevelGUI* pGUI = new LevelGUI;
+    shared_ptr<LevelGUI> pGUI(new LevelGUI);
     pGUI->SetParam(passedTime, fps, bombsNumber, score);
     const uint16_t maxX = ScreenSingleton::getInstance().GetMaxX();
     const uint16_t maxY = ScreenSingleton::getInstance().GetMaxY();
@@ -42,23 +42,24 @@ SBomber::SBomber()
     pGUI->SetFinishX(offset + width - 4);
     vecStaticObj.push_back(pGUI);
 
-    Ground* pGr = new Ground;
+    shared_ptr<Ground> pGr(new Ground);
     const uint16_t groundY = maxY - 5;
     pGr->SetPos(offset + 1, groundY);
     pGr->SetWidth(width - 2);
     vecStaticObj.push_back(pGr);
 
-    Tank* pTank = new Tank;
+    shared_ptr<Tank> pTank(new Tank);
     pTank->SetWidth(13);
     pTank->SetPos(30, groundY - 1);
     vecStaticObj.push_back(pTank);
 
-    pTank = new Tank;
+    //make_unique(new Tank);
+    pTank = make_unique<Tank>();
     pTank->SetWidth(13);
     pTank->SetPos(50, groundY - 1);
     vecStaticObj.push_back(pTank);
 
-    House * pHouse = new House;
+    shared_ptr<House> pHouse(new House);
     pHouse->SetWidth(13);
     pHouse->SetPos(80, groundY - 1);
     vecStaticObj.push_back(pHouse);
@@ -83,13 +84,13 @@ SBomber::~SBomber()
     //    }
     //}
 
-    for (size_t i = 0; i < vecStaticObj.size(); i++)
-    {
-        if (vecStaticObj[i] != nullptr)
-        {
-            delete vecStaticObj[i];
-        }
-    }
+    //for (size_t i = 0; i < vecStaticObj.size(); i++)
+    //{
+    //    if (vecStaticObj[i] != nullptr)
+    //    {
+    //        delete vecStaticObj[i];
+    //    }
+    //}
 }
 
 void SBomber::MoveObjects()
@@ -124,7 +125,7 @@ void SBomber::CheckPlaneAndLevelGUI()
 void SBomber::CheckBombsAndGround() 
 {
     vector<shared_ptr<Bomb>> vecBombs = FindAllBombs();
-    Ground* pGround = FindGround();
+    shared_ptr<Ground> pGround = FindGround();
     const double y = pGround->GetY();
     for (size_t i = 0; i < vecBombs.size(); i++)
     {
@@ -140,7 +141,7 @@ void SBomber::CheckBombsAndGround()
 
 void SBomber::CheckDestoyableObjects(shared_ptr<Bomb> pBomb)
 {
-    vector<DestroyableGroundObject*> vecDestoyableObjects = FindDestoyableGroundObjects();
+    vector<shared_ptr<DestroyableGroundObject>> vecDestoyableObjects = FindDestoyableGroundObjects();
     const double size = pBomb->GetWidth();
     const double size_2 = size / 2;
     for (size_t i = 0; i < vecDestoyableObjects.size(); i++)
@@ -168,7 +169,7 @@ void SBomber::DeleteDynamicObj(std::shared_ptr<DynamicObject> pObj)
     }
 }
 
-void SBomber::DeleteStaticObj(GameObject* pObj)
+void SBomber::DeleteStaticObj(shared_ptr<GameObject> pObj)
 {
     auto it = vecStaticObj.begin();
     for (; it != vecStaticObj.end(); it++)
@@ -181,21 +182,21 @@ void SBomber::DeleteStaticObj(GameObject* pObj)
     }
 }
 
-vector<DestroyableGroundObject*> SBomber::FindDestoyableGroundObjects() const
+vector<shared_ptr<DestroyableGroundObject>> SBomber::FindDestoyableGroundObjects() const
 {
-    vector<DestroyableGroundObject*> vec;
-    Tank* pTank;
-    House* pHouse;
+    vector<shared_ptr<DestroyableGroundObject>> vec;
+    shared_ptr<Tank> pTank;
+    shared_ptr<House> pHouse;
     for (size_t i = 0; i < vecStaticObj.size(); i++)
     {
-        pTank = dynamic_cast<Tank*>(vecStaticObj[i]);
+        pTank = dynamic_pointer_cast<Tank>(vecStaticObj[i]);
         if (pTank != nullptr)
         {
             vec.push_back(pTank);
             continue;
         }
 
-        pHouse = dynamic_cast<House*>(vecStaticObj[i]);
+        pHouse = dynamic_pointer_cast<House>(vecStaticObj[i]);
         if (pHouse != nullptr)
         {
             vec.push_back(pHouse);
@@ -206,13 +207,13 @@ vector<DestroyableGroundObject*> SBomber::FindDestoyableGroundObjects() const
     return vec;
 }
 
-Ground* SBomber::FindGround() const
+shared_ptr<Ground> SBomber::FindGround() const
 {
-    Ground* pGround;
+    shared_ptr<Ground> pGround;
 
     for (size_t i = 0; i < vecStaticObj.size(); i++)
     {
-        pGround = dynamic_cast<Ground *>(vecStaticObj[i]);
+        pGround = dynamic_pointer_cast<Ground>(vecStaticObj[i]);
         if (pGround != nullptr)
         {
             return pGround;
@@ -252,11 +253,11 @@ shared_ptr<Plane> SBomber::FindPlane() const
     return nullptr;
 }
 
-LevelGUI* SBomber::FindLevelGUI() const
+shared_ptr<LevelGUI> SBomber::FindLevelGUI() const
 {
     for (size_t i = 0; i < vecStaticObj.size(); i++)
     {
-        LevelGUI* p = dynamic_cast<LevelGUI*>(vecStaticObj[i]);
+        shared_ptr<LevelGUI> p = dynamic_pointer_cast<LevelGUI>(vecStaticObj[i]);
         if (p != nullptr)
         {
             return p;
