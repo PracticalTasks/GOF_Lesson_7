@@ -9,13 +9,13 @@ using namespace MyTools;
 
 void Plane::Draw() const
 {
-    MyTools::SetColor(CC_LightBlue);
-    GotoXY(x, y);
+    logger->SetColor(CC_LightBlue);
+    logger->GotoXY(x, y);
     cout << "=========>";
-    GotoXY(x - 2, y - 1);
+    logger->GotoXY(x - 2, y - 1);
     cout << "===";
-    GotoXY(x + 3, y - 1);
+    logger->GotoXY(x + 3, y - 1);
     cout << "\\\\\\\\";
-    GotoXY(x + 3, y + 1);
+    logger->GotoXY(x + 3, y + 1);
     cout << "////";
 }

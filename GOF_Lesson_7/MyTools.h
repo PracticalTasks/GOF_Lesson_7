@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 #include <string>
+#include<memory>
+#include <fstream>
 
 namespace MyTools {
 
@@ -27,29 +29,29 @@ namespace MyTools {
     };
 
 	//=============================================================================================
+    //RAII
+    class FileLogger
+    {
+    public:
+        FileLogger(const std::string& FN);
+        ~FileLogger();
+        void ClrScr();
+        void GotoXY(double x, double y);
+        uint16_t GetMaxX();
+        uint16_t GetMaxY();
+        void SetColor(ConsoleColor color);
+        //=============================================================================================
+        void OpenLogFile(const std::string& FN);
+        void WriteToLog(const std::string& str);
+        void WriteToLog(const std::string& str, int n);
+        void WriteToLog(const std::string& str, double d);
+        std::string GetCurDateTime();
+    private:
+        std::ofstream logOut;
 
-	void ClrScr();
+    };
 
-	void __fastcall GotoXY(double x, double y);
-
-	uint16_t GetMaxX();
-
-	uint16_t GetMaxY();
-
-    void SetColor(ConsoleColor color);
-
-	//=============================================================================================
-
-	void __fastcall OpenLogFile(const std::string& FN);
-
-	void CloseLogFile();
-
-	void __fastcall WriteToLog(const std::string& str);
-
-	void __fastcall WriteToLog(const std::string& str, int n);
-
-	void __fastcall WriteToLog(const std::string& str, double d);
-
+    std::shared_ptr<FileLogger> logger(new FileLogger("log.txt"));
 	//=============================================================================================
 
 };

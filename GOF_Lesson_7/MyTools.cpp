@@ -6,7 +6,6 @@
 
 #include <string>
 #include <iostream>
-#include <fstream>
 #include <chrono>
 
 
@@ -16,28 +15,41 @@ using namespace std;
 
 namespace MyTools {
 
-    ofstream logOut;
-
     //=============================================================================================
 
-    void ClrScr()
+    FileLogger::FileLogger(const std::string& FN)
+    {
+        logOut.open(FN, ios_base::out);
+
+    }
+
+    FileLogger::~FileLogger()
+    {
+        if (logOut.is_open())
+        {
+            logOut.close();
+        }
+    }
+
+    void FileLogger::ClrScr()
     {
         system("cls");
     }
 
-    void __fastcall GotoXY(double x, double y)
+    void FileLogger::GotoXY(double x, double y)
     {
         const COORD cc = { short(x), short(y) };
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cc);
     }
 
-    uint16_t GetMaxX()
+    uint16_t FileLogger::GetMaxX()
     {
         HANDLE hWndConsole;
         if (hWndConsole = GetStdHandle(-12))
         {
             CONSOLE_SCREEN_BUFFER_INFO consoleInfo;
             if (GetConsoleScreenBufferInfo(hWndConsole, &consoleInfo))
+
             {
                 return consoleInfo.srWindow.Right;
                 int height = consoleInfo.srWindow.Bottom - consoleInfo.srWindow.Top + 1;
@@ -47,7 +59,7 @@ namespace MyTools {
         return 0;
     }
 
-    uint16_t GetMaxY()
+    uint16_t FileLogger::GetMaxY()
     {
         HANDLE hWndConsole;
         if (hWndConsole = GetStdHandle(-12))
@@ -62,7 +74,7 @@ namespace MyTools {
         return 0;
     }
 
-    void SetColor(ConsoleColor color)
+    void FileLogger::SetColor(ConsoleColor color)
     {
         HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hConsole, color); // color =  (WORD)((BackgroundColor << 4) | TextColor))
@@ -70,20 +82,12 @@ namespace MyTools {
 
     //=============================================================================================
 
-    void __fastcall OpenLogFile(const string& FN)
+    void FileLogger::OpenLogFile(const string& FN)
     {
         logOut.open(FN, ios_base::out);
     }
 
-    void CloseLogFile()
-    {
-        if (logOut.is_open())
-        {
-            logOut.close();
-        }
-    }
-
-    string GetCurDateTime()
+    string FileLogger::GetCurDateTime()
     {
         auto cur = std::chrono::system_clock::now();
         time_t time = std::chrono::system_clock::to_time_t(cur);
@@ -93,7 +97,7 @@ namespace MyTools {
         return string(buf);
     }
 
-    void __fastcall WriteToLog(const string& str)
+    void FileLogger::WriteToLog(const string& str)
     {
         if (logOut.is_open())
         {
@@ -101,7 +105,7 @@ namespace MyTools {
         }
     }
 
-    void __fastcall WriteToLog(const string& str, int n)
+    void FileLogger::WriteToLog(const string& str, int n)
     {
         if (logOut.is_open())
         {
@@ -109,7 +113,7 @@ namespace MyTools {
         }
     }
 
-    void __fastcall WriteToLog(const string& str, double d)
+    void FileLogger::WriteToLog(const string& str, double d)
     {
         if (logOut.is_open())
         {
@@ -117,7 +121,5 @@ namespace MyTools {
         }
     }
 
-    //=============================================================================================
-
-
+    //========================================================================
 } // namespace MyTools
